@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="#">Topicos selectos de web</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#nav"
+          aria-controls="nav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav mr-auto"></ul>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a href="#" class="nav-link">Iniciar Sesion</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Registrarse</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 m-auto">
+          <h1 class="display-4 text-center">
+            Iniciar Sesión
+          </h1>
+          <p class="lead text-center">Inicia sesion en tu cuenta</p>
+          <div id="error"></div>
+          <form id="login-form">
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control"
+                id="user"
+                placeholder="Usuario"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Contraseña"
+              />
+            </div>
+            <button type="submit" class="btn btn-info btn-block mt-4">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      $("#user").change(function() {
+        $("#errormsg").remove();
+      });
+      $("#password").change(function() {
+        $("#errormsg").remove();
+      });
+      $("#login-form").submit(function(event) {
+        event.preventDefault();
+        var credenciales = {
+          user: $("#user").val(),
+          password: $("#password").val()
+        };
+
+        $.ajax({
+          type: "post",
+          dataType: "json",
+          contentType: "application/json",
+          url: "/auth",
+          data: JSON.stringify(credenciales),
+          success: function(response) {
+            sessionStorage.setItem("token", response.token);
+            sessionStorage.setItem("userid", response.userid);
+            sessionStorage.setItem("nickname", response.nickname);
+            sessionStorage.setItem("username", response.username);
+            window.location.replace("/dashboard.html");
+          },
+          statusCode: {
+            400: function() {
+              $("#error").html(`
+              <div class="alert alert-danger alert-dismissible fade show" id="errormsg" role="alert">
+                Credenciales incorrectas
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              `);
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
